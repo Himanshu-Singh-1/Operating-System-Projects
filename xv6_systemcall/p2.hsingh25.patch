@@ -1,0 +1,1042 @@
+diff -Nur xv6-p2-baseline/cs550_syscall.c xv6-p2-working/cs550_syscall.c
+--- xv6-p2-baseline/cs550_syscall.c	1969-12-31 19:00:00.000000000 -0500
++++ xv6-p2-working/cs550_syscall.c	2017-03-31 22:30:18.412426484 -0400
+@@ -0,0 +1,557 @@
++#include "types.h"
++#include "defs.h"
++#include "param.h"
++#include "memlayout.h"
++#include "mmu.h"
++#include "proc.h"
++#include "x86.h"
++#include "syscall.h"
++#include "date.h"
++//#include "string.h"  //t
++
++int sys_date(void)
++{
++
++struct rtcdate *r;
++//cprintf("\n Reached date sytem call");
++if(argptr(0, (void*)&r, sizeof(&r)) < 0)
++    return -1; 
++cmostime(r);
++return 0;
++}
++
++int sys_aaICO(void)
++{
++//cprintf("\n**Reached aaico function**\n");
++return 413;
++}
++
++int sys_RwwzQ(void)
++{ 
++return 523;
++}
++
++
++
++
++
++//all linear functions
++
++//all linear functions
++//int sys_aaICO(void)
++//{
++// return 413;}
++//int sys_RwwzQ(void)
++//{
++//return 523;}
++int sys_vPlkH(void)
++{
++ return 485;}
++int sys_nAAkW(void)
++{
++ return 434;}
++int sys_V4XHy(void)
++{
++ return 419;}
++int sys_DIJ1J(void)
++{
++ return 338;}
++int sys_uby8E(void)
++{
++ return 461;}
++int sys_HrYmw(void)
++{
++ return 503;}
++int sys_It9GD(void)
++{
++ return 385;}
++int sys_kBqyL(void)
++{
++ return 483;}
++int sys_uFvqh(void)
++{
++ return 522;}
++int sys_kCOzo(void)
++{
++ return 486;}
++int sys_BdglP(void)
++{
++ return 457;}
++int sys_vsu9T(void){
++ return 491;}
++int sys_GhENr(void){
++ return 436;}
++int sys_cNlc2(void){
++ return 434;}
++int sys_AUX47(void){
++ return 345;}
++int sys_OJjUF(void){
++ return 414;}
++int sys_rwbCB(void){
++ return 464;}
++int sys_U63O6(void){
++ return 323;}
++int sys_buYn9(void){
++ return 471;}
++int sys_pvRfc(void){
++ return 513;}
++int sys_IbIsf(void){
++ return 461;}
++int sys_RH7FR(void){
++ return 361;}
++int sys_u5Ncu(void){
++ return 464;}
++int sys_vA3kF(void){
++ return 411;}
++int sys_ZyJFv(void){
++ return 473;}
++int sys_a_kuY(void){
++ return 505;}
++int sys_DF2ak(void){
++ return 392;}
++int sys_bifXB(void){
++ return 459;}
++int sys_OpuAe(void){
++ return 474;}
++int sys_DNUxN(void){
++ return 429;}
++int sys_ancIB(void){
++ return 445;}
++int sys_fiuCL(void){
++ return 467;}
++int sys_f85c4(void){
++ return 362;}
++int sys_pKQyj(void){
++ return 495;}
++int sys_sPh9f(void){
++ return 458;}
++int sys_aSdV9(void){
++ return 423;}
++int sys_hEwee(void){
++ return 494;}
++int sys_m7xSo(void){
++ return 478;}
++int sys_lpg5S(void){
++ return 459;}
++int sys_J7GF1(void){
++ return 319;}
++int sys_GYEGy(void){
++ return 421;}
++int sys_UHuoA(void){
++ return 450;}
++int sys_lfawm(void){
++ return 535;}
++int sys_SkxVQ(void){
++ return 477;}
++int sys_m7dk_(void){
++ return 466;}
++int sys_C2FTH(void){
++ return 343;}
++int sys_ZFvwG(void){
++ return 468;}
++int sys_xMznMiMbd2ASBAopjUBD(void){
++ return 1763;}
++
++
++
++typedef struct
++{
++ char *name;
++ int (* funct)();
++}linear_functions;
++
++
++
++linear_functions lfunc[] = {
++	{"aaICO",&sys_aaICO},
++	{"RwwzQ",&sys_RwwzQ}, 
++	{"vPlkH",&sys_vPlkH},
++	{"nAAkW",&sys_nAAkW}, 
++	{"V4XHy",&sys_V4XHy}, 
++	{"DIJ1J",&sys_DIJ1J}, 
++	{"uby8E",&sys_uby8E},
++	{"HrYmw",&sys_HrYmw}, 
++	{"It9GD",&sys_It9GD}, 
++	{"kBqyL",&sys_kBqyL},
++	{"uFvqh",&sys_uFvqh},
++	{"kCOzo",&sys_kCOzo},
++	{"BdglP",&sys_BdglP},
++	{"vsu9T",&sys_vsu9T},
++	{"GhENr",&sys_GhENr},
++	{"cNlc2",&sys_cNlc2},
++	{"AUX47",&sys_AUX47},
++	{"OJjUF",&sys_OJjUF},
++	{"rwbCB",&sys_rwbCB},
++	{"U63O6",&sys_U63O6},
++	{"buYn9",&sys_buYn9},
++	{"pvRfc",&sys_pvRfc},
++	{"IbIsf",&sys_IbIsf},
++	{"RH7FR",&sys_RH7FR},
++	{"u5Ncu",&sys_u5Ncu},
++	{"vA3kF",&sys_vA3kF},
++	{"ZyJFv",&sys_ZyJFv},
++	{"a_kuY",&sys_a_kuY},
++	{"DF2ak",&sys_DF2ak},
++	{"bifXB",&sys_bifXB},
++	{"OpuAe",&sys_OpuAe},
++	{"DNUxN",&sys_DNUxN},
++	{"ancIB",&sys_ancIB},
++	{"fiuCL",&sys_fiuCL},
++	{"f85c4",&sys_f85c4},
++	{"pKQyj",&sys_pKQyj},
++	{"sPh9f",&sys_sPh9f},
++	{"aSdV9",&sys_aSdV9},
++	{"hEwee",&sys_hEwee},
++	{"m7xSo",&sys_m7xSo},
++	{"lpg5S",&sys_lpg5S},
++	{"J7GF1",&sys_J7GF1},
++	{"GYEGy",&sys_GYEGy},
++	{"UHuoA",&sys_UHuoA},
++	{"lfawm",&sys_lfawm},
++	{"SkxVQ",&sys_SkxVQ},
++	{"m7dk_",&sys_m7dk_},
++	{"C2FTH",&sys_C2FTH},
++	{"ZFvwG",&sys_ZFvwG},
++	{"xMznMiMbd2ASBAopjUBD",&sys_xMznMiMbd2ASBAopjUBD}
++};
++
++
++
++int linear_search(char *name)
++{
++//cprintf("\n**Inside linear search name: %s**\n",name);
++int i=0,num=0,tmp=0,tmpret=1;
++for(i=0;i<50;i++)
++{
++
++tmp = strlen(lfunc[i].name) - strlen(name);
++if(tmp!=0)
++continue;
++tmp = strlen(name);
++tmpret = strncmp(lfunc[i].name,name,tmp);
++if(tmpret==0)
++{
++num=lfunc[i].funct();
++break;
++}
++}
++if(tmpret!=0)
++	return -1;
++//cprintf("\n\n** loops: %d",count);
++return num;
++}
++
++
++
++//hash functions:
++int sys_ajJ2rUS36Ds7gCvYhWvRMQ4cM(void){
++ return 2106;}
++int sys_lcQQ6(void){
++ return 423;}
++int sys_tG0cd(void){
++ return 434;}
++int sys_BQaye(void){
++ return 466;}
++int sys_vRL61(void){
++ return 379;}
++int sys_BfPAS(void){
++ return 396;}
++int sys_VWqcU(void){
++ return 470;}
++int sys_rNV_x(void){
++ return 493;}
++int sys_m9TVP(void){
++ return 416;}
++int sys_dN3rB(void){
++ return 409;}
++int sys_NEorw(void){
++ return 491;}
++int sys_iE45d(void){
++ return 379;}
++int sys_VFGu_(void){
++ return 439;}
++int sys_zqf7e(void){
++ return 493;}
++int sys_Ayr5H(void){
++ return 425;}
++int sys_y7dVW(void){
++ return 449;}
++int sys_RhaR2(void){
++ return 415;}
++int sys_GUT_3(void){
++ return 386;}
++int sys_mtwGL(void){
++ return 491;}
++int sys_Rz1qA(void){
++ return 431;}
++int sys_BDslj(void){
++ return 463;}
++int sys_DYcHF(void){
++ return 398;}
++int sys_XVI4N(void){
++ return 377;}
++int sys_RknTi(void){
++ return 488;}
++int sys_eraAb(void){
++ return 475;}
++int sys_K7plu(void){
++ return 467;}
++int sys_UPjQy(void){
++ return 473;}
++int sys_uFjK1(void){
++ return 417;}
++int sys_E8Jj9(void){
++ return 362;}
++int sys_viJpE(void){
++ return 478;}
++int sys_y8hmu(void){
++ return 507;}
++int sys_GhPNY(void){
++ return 422;}
++int sys_mEymb(void){
++ return 506;}
++int sys_UAi7z(void){
++ return 432;}
++int sys_g3fke(void){
++ return 464;}
++int sys_spiXC(void){
++ return 487;}
++int sys_sCY6P(void){
++ return 405;}
++int sys_lQ5p2(void){
++ return 404;}
++int sys_yFLZV(void){
++ return 443;}
++int sys_y7NBZ(void){
++ return 410;}
++int sys_JS_81(void){
++ return 357;}
++int sys_pHGgA(void){
++ return 423;}
++int sys_D3BT2(void){
++ return 319;}
++int sys_LYSUb(void){
++ return 431;}
++int sys_UHDeS(void){
++ return 409;}
++int sys_zQQm5(void){
++ return 446;}
++int sys_T4IiC(void){
++ return 381;}
++int sys_ZnCtG(void){
++ return 454;}
++int sys_TBDYx(void){
++ return 427;}
++int sys_k_jNM(void){
++ return 463;}
++
++//hash functions structure:
++ 
++typedef struct
++{
++char *name;
++int (* funct)();
++}hash_functions;
++
++hash_functions hfunction[] = {
++	
++{"ajJ2rUS36Ds7gCvYhWvRMQ4cM",&sys_ajJ2rUS36Ds7gCvYhWvRMQ4cM},	
++{"lcQQ6",&sys_lcQQ6},
++{"tG0cd",&sys_tG0cd},
++{"BQaye",&sys_BQaye},
++{"vRL61",&sys_vRL61},
++{"BfPAS",&sys_BfPAS},
++{"VWqcU",&sys_VWqcU},
++{"rNV_x",&sys_rNV_x},
++{"m9TVP",&sys_m9TVP},
++{"dN3rB",&sys_dN3rB},
++{"NEorw",&sys_NEorw},
++{"iE45d",&sys_iE45d},
++{"VFGu_",&sys_VFGu_},
++{"zqf7e",&sys_zqf7e},
++{"Ayr5H",&sys_Ayr5H},
++{"y7dVW",&sys_y7dVW},
++{"RhaR2",&sys_RhaR2},
++{"GUT_3",&sys_GUT_3},
++{"mtwGL",&sys_mtwGL},
++{"Rz1qA",&sys_Rz1qA},
++{"BDslj",&sys_BDslj},
++{"DYcHF",&sys_DYcHF},
++{"XVI4N",&sys_XVI4N},
++{"RknTi",&sys_RknTi},
++{"eraAb",&sys_eraAb},
++{"K7plu",&sys_K7plu},
++{"UPjQy",&sys_UPjQy},
++{"uFjK1",&sys_uFjK1},
++{"E8Jj9",&sys_E8Jj9},
++{"viJpE",&sys_viJpE},
++{"y8hmu",&sys_y8hmu},
++{"GhPNY",&sys_GhPNY},
++{"mEymb",&sys_mEymb},
++{"UAi7z",&sys_UAi7z},
++{"g3fke",&sys_g3fke},
++{"spiXC",&sys_spiXC},
++{"sCY6P",&sys_sCY6P},
++{"lQ5p2",&sys_lQ5p2},
++{"yFLZV",&sys_yFLZV},
++{"y7NBZ",&sys_y7NBZ},
++{"JS_81",&sys_JS_81},
++{"pHGgA",&sys_pHGgA},
++{"D3BT2",&sys_D3BT2},
++{"LYSUb",&sys_LYSUb},
++{"UHDeS",&sys_UHDeS},
++{"zQQm5",&sys_zQQm5},
++{"T4IiC",&sys_T4IiC},
++{"ZnCtG",&sys_ZnCtG},
++{"TBDYx",&sys_TBDYx},
++{"k_jNM",&sys_k_jNM}
++};
++
++
++//using hashtable:
++
++
++int retascii(char *s)
++{
++int ret =0,i=0;
++char c=s[0];
++while(c!='\0'){
++ret = ret + s[i];
++c =s[i];
++i++;
++}
++return ret;
++}
++
++
++
++struct node{
++int index;
++hash_functions hfunc; 
++};
++
++struct node hashtable[51];
++
++int ini_hashtable()
++{
++int i=0,index=1;
++//int count=0;
++//cprintf("\n**Inside initialize hash table**\n");
++for(i=0;i<50;i++)
++{
++index = retascii(hfunction[i].name) % 50 + 1;
++//cprintf("\n**Inside intialize hash table: index: %d**\n",index);
++if(hashtable[index].index ==0)
++	{
++	hashtable[index].hfunc.name = hfunction[i].name;
++	hashtable[index].hfunc.funct = hfunction[i].funct;
++	hashtable[index].index = index;
++	//if(index==0)
++	//hashtable[0].index = 100;
++	}
++	
++else
++	{
++		//count = index;
++	while(hashtable[index].index!=0)
++	{
++	//cprintf("\n**Inside intialize hash table inside else: index: %d**\n",index);
++	index++;
++	if(index>50)
++		index =1;
++	}
++	hashtable[index].hfunc.name = hfunction[i].name;
++	hashtable[index].hfunc.funct = hfunction[i].funct;
++	
++	hashtable[index].index = index;
++	
++	//count = index-count;
++	//if(count!=0)
++	//cprintf("\n** for function: %s count collision is: %d  **\n",hfunction[i].name,count);
++	}
++//cprintf("\n**Inside intialize hash table: index: %d**\n",index);
++//cprintf("\n** for function: %s index: %d**\n",hashtable[index].hfunc.name,hashtable[index].index);
++}
++//hashtable[0].index = 0;
++//cprintf("\n\n** first function inside hashtable: %s    **\n\n",hashtable[0].hfunc.name);
++return 0;
++}
++
++
++
++int hashcall(char *name)
++{
++	int index =0,tmp=0,var=1,count=1;
++	index = retascii(name)%50 + 1;
++	tmp = strlen(name) - strlen(hashtable[index].hfunc.name);
++	if(tmp==0)
++	{
++		var = strncmp(hashtable[index].hfunc.name,name,tmp);
++		if(var==0)
++			return (hashtable[index].hfunc.funct());
++			
++	}
++	
++	/*
++	if(tmp<0)
++		tmp = strlen(name);
++	else
++		tmp = strlen(hashtable[index].hfunc.name);
++	var = strncmp(hashtable[index].hfunc.name,name,tmp);
++	*/
++	
++	while(var!=0){
++		if(count>=49)
++			return -1;
++    if(index>=49)
++		index =0;
++	tmp = strlen(name) - strlen(hashtable[index].hfunc.name);
++	if(tmp!=0)
++	{
++		index++;
++		count++;
++		continue;
++	}
++	else
++	{
++		tmp = strlen(name);
++	var = strncmp(hashtable[index].hfunc.name,name,tmp);
++	index++;
++	count++;
++	}
++	}
++	index--;
++	return (hashtable[index].hfunc.funct());
++}
++
++
++
++void 
++cs550_syscall65(void)
++{
++
++int num=0;
++char *str = (char *)proc->tf->eax;   //w
++//cprintf("\n** inside cs550_syscall65 function string: %s**",(char *)proc->tf->eax);
++//num = sys_aaICO();   --w
++//testin lfunctions:
++num = linear_search(str);      //w
++//cprintf("\n** num return after linear search**: %d\n",num);
++
++//ini_hashtable();   //t
++//cprintf("\n** after initialize hashtable**\n");
++//num = hashcall(str);
++//cprintf("\n** num return atfer hashcall**: %d\n",num);
++proc->tf->eax = num;
++}
++
++void 
++cs550_syscall66(void)
++{
++int num=0;
++char *str = (char *)proc->tf->eax;   //w
++//cprintf("\n** inside cs550_syscall66 function string: %s**",(char *)proc->tf->eax);
++num = hashcall(str);
++//cprintf("\n** num return atfer hashcall**: %d\n",num);
++proc->tf->eax = num;
++}
+diff -Nur xv6-p2-baseline/cs550_user.c xv6-p2-working/cs550_user.c
+--- xv6-p2-baseline/cs550_user.c	1969-12-31 19:00:00.000000000 -0500
++++ xv6-p2-working/cs550_user.c	2017-03-31 22:41:00.847015197 -0400
+@@ -0,0 +1,92 @@
++#include "types.h"
++#include "stat.h"
++#include "user.h"
++#include "date.h"
++int
++main(void)
++{
++struct rtcdate r;
++int num=0,time=0,i=0,time1=0,tmp=0;
++//printf(1,"\ncs550_user main enter function name:\n");
++if(date(&r))
++{
++printf(2,"failed");
++exit();
++}
++
++printf(1,"Syscall date:\n year: %d  month: %d day: %d\n",r.year,r.month,r.day);
++
++time=uptime();
++for(i=0;i<1000000;i++)
++{
++num = getpid();
++}
++time1=uptime();
++tmp = time1-time;
++tmp = tmp*10;
++printf(1,"\n\nSyscall pid UPTIME: %d\n\n",tmp);
++
++
++
++time = uptime();
++//printf(1,"\n*Before aaICO*\n");
++for(i=0;i<1000000;i++)
++{
++num = aaICO();
++}
++time1 = uptime();
++tmp = (time1-time)*10;
++printf(1,"\nLinear Search SYSCALL65: aaICO\nreturned value:* %d\nUPTIME: %d\n",num,tmp);
++
++
++//printf(1,"\n*Before xMznMiMbd2ASBAopjUBD*\n");
++time=uptime();
++for(i=0;i<1000000;i++)
++{
++num = xMznMiMbd2ASBAopjUBD();
++}
++time1=uptime();
++tmp = time1-time;
++tmp = tmp*10;
++printf(1,"\nLinear Search SYSCALL65: xMznMiMbd2ASBAopjUBD\nreturned value:%d\nUPTIME: %d\n",num,tmp);
++
++
++
++time = uptime();
++//printf(1,"\n*Before  lQ5p2*\n");
++for(i=0;i<1000000;i++)
++{
++num =  BfPAS();
++}
++time1 = uptime();
++tmp = (time1-time)*10;
++printf(1,"\nHashing SYSCALL66: BfPAS\nReturned Value: %d\nUPTIME: %d\n",num,tmp);
++
++
++time = uptime();
++//printf(1,"\n*Before dN3rB    *\n");
++for(i=0;i<1000000;i++)
++{
++num = dN3rB();
++}
++time1 = uptime();
++tmp = (time1-time)*10;
++printf(1,"\nHashing SYSCALL66:dN3rB \nReturned Value: %d\nUPTIME: %d\n",num,tmp);
++
++char *p = "himanshu";
++int rv;
++asm volatile("movl %0, %%eax" : : "rm" (p));
++asm volatile("int $65" : :);
++asm volatile("movl %%eax, %0" : "=rm" (rv) : );
++
++printf(1,"\nLinear Bad addresss value: %d \n",rv);
++
++asm volatile("movl %0, %%eax" : : "rm" (p));
++asm volatile("int $66" : :);
++asm volatile("movl %%eax, %0" : "=rm" (rv) : );
++printf(1,"\nHashTable Bad addresss value: %d\n ",rv);
++
++exit();
++
++
++}
+diff -Nur xv6-p2-baseline/defs.h xv6-p2-working/defs.h
+--- xv6-p2-baseline/defs.h	2017-03-13 08:47:00.000000000 -0400
++++ xv6-p2-working/defs.h	2017-03-31 17:45:23.431382191 -0400
+@@ -152,6 +152,11 @@
+ int             fetchstr(uint, char**);
+ void            syscall(void);
+ 
++//cs550_syscall.c
++int sys_date();
++void cs550_syscall65();
++void cs550_syscall66();
++
+ // timer.c
+ void            timerinit(void);
+ 
+diff -Nur xv6-p2-baseline/Makefile xv6-p2-working/Makefile
+--- xv6-p2-baseline/Makefile	2017-03-13 08:47:00.000000000 -0400
++++ xv6-p2-working/Makefile	2017-03-30 12:35:12.975695776 -0400
+@@ -21,6 +21,7 @@
+ 	swtch.o\
+ 	syscall.o\
+ 	sysfile.o\
++	cs550_syscall.o\
+ 	sysproc.o\
+ 	timer.o\
+ 	trapasm.o\
+@@ -175,6 +176,7 @@
+ 	_usertests\
+ 	_wc\
+ 	_zombie\
++	_cs550_user\
+ 
+ fs.img: mkfs README $(UPROGS)
+ 	./mkfs fs.img README $(UPROGS)
+@@ -244,6 +246,7 @@
+ EXTRA=\
+ 	mkfs.c ulib.c user.h cat.c echo.c forktest.c grep.c kill.c\
+ 	ln.c ls.c mkdir.c rm.c stressfs.c usertests.c wc.c zombie.c\
++	cs550_user.c\
+ 	printf.c umalloc.c\
+ 	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
+ 	.gdbinit.tmpl gdbutil\
+diff -Nur xv6-p2-baseline/syscall.c xv6-p2-working/syscall.c
+--- xv6-p2-baseline/syscall.c	2017-03-13 08:47:00.000000000 -0400
++++ xv6-p2-working/syscall.c	2017-03-30 21:58:06.118549321 -0400
+@@ -98,6 +98,7 @@
+ extern int sys_wait(void);
+ extern int sys_write(void);
+ extern int sys_uptime(void);
++extern int sys_date(void);
+ 
+ static int (*syscalls[])(void) = {
+ [SYS_fork]    sys_fork,
+@@ -121,6 +122,7 @@
+ [SYS_link]    sys_link,
+ [SYS_mkdir]   sys_mkdir,
+ [SYS_close]   sys_close,
++[SYS_date]    sys_date,
+ };
+ 
+ void
+diff -Nur xv6-p2-baseline/syscall.h xv6-p2-working/syscall.h
+--- xv6-p2-baseline/syscall.h	2017-03-13 08:47:00.000000000 -0400
++++ xv6-p2-working/syscall.h	2017-03-30 21:33:50.492334305 -0400
+@@ -20,3 +20,5 @@
+ #define SYS_link   19
+ #define SYS_mkdir  20
+ #define SYS_close  21
++#define SYS_date   22
++//#define SYS_aaICO  23
+diff -Nur xv6-p2-baseline/trap.c xv6-p2-working/trap.c
+--- xv6-p2-baseline/trap.c	2017-03-13 08:47:00.000000000 -0400
++++ xv6-p2-working/trap.c	2017-03-31 17:52:52.770187165 -0400
+@@ -7,7 +7,7 @@
+ #include "x86.h"
+ #include "traps.h"
+ #include "spinlock.h"
+-
++void ini_hashtable(void);
+ // Interrupt descriptor table (shared by all CPUs).
+ struct gatedesc idt[256];
+ extern uint vectors[];  // in vectors.S: array of 256 entry pointers
+@@ -22,7 +22,9 @@
+   for(i = 0; i < 256; i++)
+     SETGATE(idt[i], 0, SEG_KCODE<<3, vectors[i], 0);
+   SETGATE(idt[T_SYSCALL], 1, SEG_KCODE<<3, vectors[T_SYSCALL], DPL_USER);
+-
++  SETGATE(idt[T_SYSCALL65], 1, SEG_KCODE<<3, vectors[T_SYSCALL65], DPL_USER);
++  SETGATE(idt[T_SYSCALL66], 1, SEG_KCODE<<3, vectors[T_SYSCALL66], DPL_USER);
++  ini_hashtable();
+   initlock(&tickslock, "time");
+ }
+ 
+@@ -46,6 +48,28 @@
+     return;
+   }
+ 
++  if(tf->trapno == T_SYSCALL65){
++    if(proc->killed)
++      exit();
++    proc->tf = tf;
++    //cprintf("\nInside trap proc*: %u\n",proc);
++   cs550_syscall65();
++    if(proc->killed)
++      exit();
++    return;
++   }
++   
++   if(tf->trapno == T_SYSCALL66){
++    if(proc->killed)
++      exit();
++    proc->tf = tf;
++    //cprintf("\nInside trap proc*: %u\n",proc);
++   cs550_syscall66();
++    if(proc->killed)
++      exit();
++    return;
++   }
++
+   switch(tf->trapno){
+   case T_IRQ0 + IRQ_TIMER:
+     if(cpunum() == 0){
+diff -Nur xv6-p2-baseline/traps.h xv6-p2-working/traps.h
+--- xv6-p2-baseline/traps.h	2017-03-13 08:47:00.000000000 -0400
++++ xv6-p2-working/traps.h	2017-03-31 16:49:18.191636837 -0400
+@@ -25,6 +25,8 @@
+ // These are arbitrarily chosen, but with care not to overlap
+ // processor defined exceptions or interrupt vectors.
+ #define T_SYSCALL       64      // system call
++#define T_SYSCALL65     65      // cs550_syscall65
++#define T_SYSCALL66     66      // cs550_syscall66
+ #define T_DEFAULT      500      // catchall
+ 
+ #define T_IRQ0          32      // IRQ 0 corresponds to int T_IRQ
+diff -Nur xv6-p2-baseline/user.h xv6-p2-working/user.h
+--- xv6-p2-baseline/user.h	2017-03-13 08:47:00.000000000 -0400
++++ xv6-p2-working/user.h	2017-03-31 17:05:52.199626788 -0400
+@@ -23,6 +23,111 @@
+ char* sbrk(int);
+ int sleep(int);
+ int uptime(void);
++//cs550 system calls 65
++int date(struct rtcdate*);
++int aaICO(void); 
++int RwwzQ(void); 
++int vPlkH(void); 
++int nAAkW(void); 
++int V4XHy(void); 
++int DIJ1J(void); 
++int uby8E(void); 
++int HrYmw(void); 
++int It9GD(void); 
++int kBqyL(void); 
++int uFvqh(void); 
++int kCOzo(void); 
++int BdglP(void); 
++int vsu9T(void); 
++int GhENr(void); 
++int cNlc2(void);
++int AUX47(void); 
++int OJjUF(void); 
++int rwbCB(void); 
++int U63O6(void); 
++int buYn9(void); 
++int pvRfc(void); 
++int IbIsf(void); 
++int RH7FR(void); 
++int u5Ncu(void);
++int vA3kF(void); 
++int ZyJFv(void); 
++int a_kuY(void); 
++int DF2ak(void); 
++int bifXB(void); 
++int OpuAe(void); 
++int DNUxN(void); 
++int ancIB(void); 
++int fiuCL(void); 
++int f85c4(void); 
++int pKQyj(void); 
++int sPh9f(void); 
++int aSdV9(void); 
++int hEwee(void); 
++int m7xSo(void); 
++int lpg5S(void); 
++int J7GF1(void);
++int GYEGy(void);
++int UHuoA(void); 
++int lfawm(void); 
++int SkxVQ(void); 
++int m7dk_(void); 
++int C2FTH(void); 
++int ZFvwG(void); 
++int xMznMiMbd2ASBAopjUBD(void); 
++
++//cs550 system calls 66
++int ajJ2rUS36Ds7gCvYhWvRMQ4cM(void); 
++int lcQQ6(void); 
++int tG0cd(void); 
++int BQaye(void); 
++int vRL61(void); 
++int BfPAS(void); 
++int VWqcU(void); 
++int rNV_x(void); 
++int m9TVP(void); 
++int dN3rB(void); 
++int NEorw(void); 
++int iE45d(void); 
++int VFGu_(void); 
++int zqf7e(void); 
++int Ayr5H(void); 
++int y7dVW(void); 
++int RhaR2(void); 
++int GUT_3(void); 
++int mtwGL(void); 
++int Rz1qA(void); 
++int BDslj(void); 
++int DYcHF(void); 
++int XVI4N(void); 
++int RknTi(void); 
++int eraAb(void); 
++int K7plu(void); 
++int UPjQy(void);
++int uFjK1(void);
++int E8Jj9(void); 
++int viJpE(void); 
++int y8hmu(void); 
++int GhPNY(void); 
++int mEymb(void); 
++int UAi7z(void); 
++int g3fke(void); 
++int spiXC(void); 
++int sCY6P(void); 
++int lQ5p2(void); 
++int yFLZV(void); 
++int y7NBZ(void); 
++int JS_81(void); 
++int pHGgA(void); 
++int D3BT2(void); 
++int LYSUb(void); 
++int UHDeS(void); 
++int zQQm5(void); 
++int T4IiC(void); 
++int ZnCtG(void); 
++int TBDYx(void); 
++int k_jNM(void); 
++
+ 
+ // ulib.c
+ int stat(char*, struct stat*);
+diff -Nur xv6-p2-baseline/usys.S xv6-p2-working/usys.S
+--- xv6-p2-baseline/usys.S	2017-03-13 08:47:00.000000000 -0400
++++ xv6-p2-working/usys.S	2017-03-31 17:26:06.802981193 -0400
+@@ -8,6 +8,26 @@
+     int $T_SYSCALL; \
+     ret
+ 
++
++
++#define SYSCALL65(name) \
++  .global name; \
++  DATE_STRING##name: .string #name; \
++  name: \
++   movl $DATE_STRING##name, %eax; \
++   int  $T_SYSCALL65; \
++   ret
++
++
++#define SYSCALL66(name) \
++  .global name; \
++  DATE_STRING##name: .string #name; \
++  name: \
++   movl $DATE_STRING##name, %eax; \
++   int  $T_SYSCALL66; \
++   ret   
++   
++
+ SYSCALL(fork)
+ SYSCALL(exit)
+ SYSCALL(wait)
+@@ -29,3 +49,104 @@
+ SYSCALL(sbrk)
+ SYSCALL(sleep)
+ SYSCALL(uptime)
++SYSCALL(date)
++SYSCALL65(aaICO) 
++SYSCALL65(RwwzQ) 
++SYSCALL65(vPlkH)
++SYSCALL65(nAAkW) 
++SYSCALL65(V4XHy) 
++SYSCALL65(DIJ1J) 
++SYSCALL65(uby8E) 
++SYSCALL65(HrYmw) 
++SYSCALL65(It9GD) 
++SYSCALL65(kBqyL) 
++SYSCALL65(uFvqh) 
++SYSCALL65(kCOzo) 
++SYSCALL65(BdglP) 
++SYSCALL65(vsu9T) 
++SYSCALL65(GhENr) 
++SYSCALL65(cNlc2) 
++SYSCALL65(AUX47) 
++SYSCALL65(OJjUF) 
++SYSCALL65(rwbCB) 
++SYSCALL65(U63O6) 
++SYSCALL65(buYn9) 
++SYSCALL65(pvRfc) 
++SYSCALL65(IbIsf) 
++SYSCALL65(RH7FR) 
++SYSCALL65(u5Ncu) 
++SYSCALL65(vA3kF) 
++SYSCALL65(ZyJFv) 
++SYSCALL65(a_kuY) 
++SYSCALL65(DF2ak) 
++SYSCALL65(bifXB) 
++SYSCALL65(OpuAe) 
++SYSCALL65(DNUxN) 
++SYSCALL65(ancIB) 
++SYSCALL65(fiuCL) 
++SYSCALL65(f85c4) 
++SYSCALL65(pKQyj) 
++SYSCALL65(sPh9f) 
++SYSCALL65(aSdV9) 
++SYSCALL65(hEwee) 
++SYSCALL65(m7xSo) 
++SYSCALL65(lpg5S) 
++SYSCALL65(J7GF1) 
++SYSCALL65(GYEGy) 
++SYSCALL65(UHuoA) 
++SYSCALL65(lfawm) 
++SYSCALL65(SkxVQ) 
++SYSCALL65(m7dk_) 
++SYSCALL65(C2FTH) 
++SYSCALL65(ZFvwG) 
++SYSCALL65(xMznMiMbd2ASBAopjUBD)
++SYSCALL66(ajJ2rUS36Ds7gCvYhWvRMQ4cM) 
++SYSCALL66(lcQQ6) 
++SYSCALL66(tG0cd) 
++SYSCALL66(BQaye) 
++SYSCALL66(vRL61) 
++SYSCALL66(BfPAS) 
++SYSCALL66(VWqcU) 
++SYSCALL66(rNV_x) 
++SYSCALL66(m9TVP) 
++SYSCALL66(dN3rB) 
++SYSCALL66(NEorw) 
++SYSCALL66(iE45d) 
++SYSCALL66(VFGu_) 
++SYSCALL66(zqf7e) 
++SYSCALL66(Ayr5H) 
++SYSCALL66(y7dVW) 
++SYSCALL66(RhaR2) 
++SYSCALL66(GUT_3) 
++SYSCALL66(mtwGL) 
++SYSCALL66(Rz1qA) 
++SYSCALL66(BDslj) 
++SYSCALL66(DYcHF) 
++SYSCALL66(XVI4N) 
++SYSCALL66(RknTi) 
++SYSCALL66(eraAb) 
++SYSCALL66(K7plu) 
++SYSCALL66(UPjQy) 
++SYSCALL66(uFjK1) 
++SYSCALL66(E8Jj9) 
++SYSCALL66(viJpE) 
++SYSCALL66(y8hmu) 
++SYSCALL66(GhPNY) 
++SYSCALL66(mEymb) 
++SYSCALL66(UAi7z) 
++SYSCALL66(g3fke) 
++SYSCALL66(spiXC) 
++SYSCALL66(sCY6P) 
++SYSCALL66(lQ5p2) 
++SYSCALL66(yFLZV) 
++SYSCALL66(y7NBZ) 
++SYSCALL66(JS_81) 
++SYSCALL66(pHGgA) 
++SYSCALL66(D3BT2) 
++SYSCALL66(LYSUb) 
++SYSCALL66(UHDeS) 
++SYSCALL66(zQQm5) 
++SYSCALL66(T4IiC) 
++SYSCALL66(ZnCtG)
++SYSCALL66(TBDYx) 
++SYSCALL66(k_jNM) 
+\ No newline at end of file
